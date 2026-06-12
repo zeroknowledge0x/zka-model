@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZK API — AI Inference Gateway</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 680px;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #00ff88;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .card h3 {
+            color: #00ff88;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+        .endpoint {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 10px;
+            word-break: break-all;
+        }
+        .endpoint .label {
+            color: #666;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .endpoint .value {
+            color: #00ff88;
+            user-select: all;
+        }
+        .models {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .model-tag {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 0.8rem;
+        }
+        .model-tag .name { color: #00ff88; font-weight: bold; }
+        .model-tag .desc { color: #666; font-size: 0.7rem; display: block; margin-top: 2px; }
+        .code-block {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #aaa;
+            overflow-x: auto;
+            text-align: left;
+            white-space: pre;
+            line-height: 1.6;
+        }
+        .code-block .kw { color: #ff79c6; }
+        .code-block .fn { color: #50fa7b; }
+        .code-block .str { color: #f1fa8c; }
+        .code-block .cm { color: #6272a4; }
+        .copy-btn {
+            background: #222;
+            border: 1px solid #333;
+            color: #888;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            float: right;
+            margin-top: -4px;
+        }
+        .copy-btn:hover { background: #333; color: #ccc; }
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #00ff88;
+            font-size: 0.85rem;
+        }
+        .dot {
+            width: 8px; height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        footer {
+            margin-top: 40px;
+            color: #333;
+            font-size: 0.75rem;
+        }
+        footer a { color: #555; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ZK API</h1>
+        <p class="subtitle">AI Inference Gateway · OpenAI-Compatible</p>
+
+        <div class="card">
+            <h3>🔌 Endpoint</h3>
+            <div class="endpoint">
+                <span class="label">Base URL</span>
+                <span class="value" id="base-url">Loading...</span>
+            </div>
+            <div class="endpoint">
+                <span class="label">API Key</span>
+                <span class="value">Contact @misaka0x for access</span>
+            </div>
+            <div style="margin-top: 10px;">
+                <span class="status"><span class="dot"></span> Operational</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🧠 Models</h3>
+            <div class="models">
+                <div class="model-tag">
+                    <span class="name">zk-v3z</span>
+                    <span class="desc">MiMo v2.5 Pro</span>
+                </div>
+                <div class="model-tag">
+                    <span class="name">zk-v1b</span>
+                    <span class="desc">Qwen 2.5 7B</span>
+                </div>
+                <div class="model-tag">
+                    <span class="name">zk-v2b</span>
+                    <span class="desc">Llama 4 Scout</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>⚡ Quick Start</h3>
+            <div class="code-block"><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+client = OpenAI(
+    base_url=<span class="str">"BASE_URL/v1"</span>,
+    api_key=<span class="str">"YOUR_API_KEY"</span>
+)
+
+response = client.chat.completions.create(
+    model=<span class="str">"zk-v3z"</span>,
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Hello!"</span>}]
+)
+<span class="kw">print</span>(response.choices[0].message.content)</div>
+        </div>
+
+        <div class="card">
+            <h3>📡 curl</h3>
+            <div class="code-block">curl -X POST BASE_URL/v1/chat/completions \
+  -H <span class="str">"Authorization: Bearer YOUR_API_KEY"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"model":"zk-v3z","messages":[{"role":"user","content":"Hi"}]}'</span></div>
+        </div>
+
+        <footer>
+            Built by <a href="https://github.com/zeroknowledge0x">@zeroknowledge0x</a> ·
+            <a href="https://twitter.com/misaka0x">@misaka0x</a>
+        </footer>
+    </div>
+
+    <script>
+        // Auto-detect base URL from config
+        const BASE = localStorage.getItem('zk-api-base') || '';
+        document.getElementById('base-url').textContent = BASE || 'Set via localStorage: zk-api-base';
+        
+        // Replace BASE_URL in code blocks
+        if (BASE) {
+            document.querySelectorAll('.code-block').forEach(el => {
+                el.innerHTML = el.innerHTML.replace(/BASE_URL/g, BASE);
+            });
+        }
+    </script>
+</body>
+</html>

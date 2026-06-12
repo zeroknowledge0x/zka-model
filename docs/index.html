@@ -464,6 +464,7 @@ response = client.chat.completions.create(
           <h2 class="section-title">Try it <span class="green">live</span></h2>
         </div>
         <div class="playground-card reveal">
+          <div class="api-key-note" style="font-family:var(--mono);font-size:12px;color:var(--green);margin-bottom:14px;padding:10px 14px;background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.12);border-radius:8px;">API Key untuk testing: <strong>zk-tested</strong></div>
           <div class="playground-header">
             <h3>🧪 Test ZKA</h3>
             <select class="model-select" id="model-sel">
@@ -477,6 +478,14 @@ response = client.chat.completions.create(
             <button class="btn btn-primary" id="play-btn" onclick="sendPlay()">Send →</button>
           </div>
           <div class="play-response" id="play-resp"></div>
+          <div class="api-key-section" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+            <div style="font-size:13px;color:var(--text-2);margin-bottom:10px;">Enter API Key</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="text" id="api-key-field" placeholder="zk-tested" style="flex:1;font-family:var(--mono);font-size:13px;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none;" />
+              <button class="btn btn-primary" style="padding:10px 16px;font-size:13px;" onclick="saveApiKey()">Save</button>
+            </div>
+            <div id="api-key-status" style="font-size:12px;margin-top:8px;color:var(--text-3);"></div>
+          </div>
         </div>
       </div>
     </section>

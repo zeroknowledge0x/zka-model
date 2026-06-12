@@ -96,6 +96,7 @@
     .nav-links { display: flex; gap: 24px; list-style: none; }
     .nav-links a { color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.15s; }
     .nav-links a:hover { color: var(--green); }
+    .nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; padding: 8px; min-width: 44px; min-height: 44px; }
 
     /* ── SECTIONS ── */
     section { padding: 100px 0; }
@@ -365,12 +366,90 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
-      section { padding: 70px 0; }
-      .container { padding: 0 20px; }
-      .nav-inner { padding: 0 20px; }
-      .models-grid { grid-template-columns: 1fr; }
-      .chat-card { max-height: none; }
-      .chat-messages { min-height: 200px; max-height: 300px; }
+      section { padding: 60px 0; }
+      .container { padding: 0 16px; }
+      .nav-inner { padding: 0 16px; }
+
+      /* Nav: hamburger menu */
+      .nav-toggle { display: flex; align-items: center; justify-content: center; }
+      .nav-links {
+        display: none; position: absolute; top: 56px; left: 0; right: 0;
+        flex-direction: column; gap: 0;
+        background: rgba(3,3,3,0.97); backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border); padding: 8px 0;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links li { border-bottom: 1px solid var(--border); }
+      .nav-links li:last-child { border-bottom: none; }
+      .nav-links a {
+        display: block; padding: 14px 16px; font-size: 15px;
+        min-height: 44px; box-sizing: border-box;
+      }
+
+      /* Hero */
+      #hero { min-height: 90vh; }
+      .hero-title { letter-spacing: -2px; }
+      .hero-sub { font-size: 15px; max-width: 100%; }
+      .hero-eyebrow { font-size: 11px; letter-spacing: 2px; }
+      .hero-ctas { flex-direction: column; gap: 10px; }
+      .hero-ctas .btn { width: 100%; justify-content: center; padding: 14px 20px; min-height: 48px; font-size: 15px; }
+      .hero-scroll { display: none; }
+
+      /* Models */
+      .models-grid { grid-template-columns: 1fr; gap: 10px; margin-top: 28px; }
+      .model-card { padding: 20px; }
+
+      /* Endpoint rows */
+      .endpoint-block { padding: 16px; }
+      .endpoint-row {
+        flex-direction: column; align-items: flex-start;
+        gap: 4px; padding: 12px 0;
+      }
+      .endpoint-value { font-size: 12px; word-break: break-all; }
+
+      /* Code blocks */
+      .code-card { margin-top: 12px; }
+      .code-body {
+        font-size: 12px; padding: 14px;
+        max-width: 100%; overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .code-header { padding: 10px 14px; }
+      .copy-btn { padding: 6px 12px; min-height: 36px; }
+
+      /* Chat */
+      .chat-card { margin-top: 20px; border-radius: 12px; }
+      .chat-top {
+        flex-direction: column; gap: 10px; align-items: flex-start;
+        padding: 12px 14px;
+      }
+      .chat-top-right { width: 100%; justify-content: flex-end; gap: 6px; }
+      .model-select { font-size: 13px; padding: 8px 12px; min-height: 40px; }
+      .chat-clear { padding: 8px 12px; min-height: 40px; }
+      .chat-messages { padding: 14px; min-height: 180px; max-height: 260px; }
+      .chat-bubble { max-width: 90%; font-size: 14px; }
+      .chat-input-row { padding: 10px 12px; }
+      .chat-input { font-size: 16px; padding: 12px 14px; min-height: 48px; }
+      .chat-send { width: 48px; height: 48px; min-width: 48px; min-height: 48px; font-size: 20px; }
+      .chat-footer { flex-direction: column; gap: 4px; align-items: flex-start; padding: 10px 14px; font-size: 12px; }
+
+      /* Contact */
+      .contact-card { padding: 28px 16px; }
+      .contact-links { flex-direction: column; gap: 8px; }
+      .contact-link { width: 100%; justify-content: center; padding: 14px 20px; min-height: 48px; font-size: 14px; }
+
+      /* Footer */
+      footer { padding: 28px 0; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .footer-links { flex-wrap: wrap; gap: 14px; }
+    }
+
+    @media (max-width: 400px) {
+      .container { padding: 0 12px; }
+      .nav-inner { padding: 0 12px; }
+      .section-title { font-size: 24px; letter-spacing: -1px; }
+      .section-desc { font-size: 14px; }
+      .chat-messages { min-height: 150px; max-height: 220px; }
     }
   </style>
 </head>
@@ -394,7 +473,8 @@
     <nav>
       <div class="nav-inner">
         <a href="#" class="nav-logo">ZK<span class="g">A</span></a>
-        <ul class="nav-links">
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menu">&#9776;</button>
+        <ul class="nav-links" id="nav-links">
           <li><a href="#models">Models</a></li>
           <li><a href="#api">API</a></li>
           <li><a href="#playground">Try It</a></li>
@@ -775,6 +855,12 @@ response = client.chat.completions.create(
       sendBtn.addEventListener('click', chatSend);
       input.addEventListener('keydown', e => { if (e.key === 'Enter') chatSend(); });
       clearBtn.addEventListener('click', chatClear);
+
+      // Mobile nav toggle
+      const navToggle = document.getElementById('nav-toggle');
+      const navLinks = document.getElementById('nav-links');
+      navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+      navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
 
       // Restore saved model
       const savedModel = localStorage.getItem('zka-chat-model');

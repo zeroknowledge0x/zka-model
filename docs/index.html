@@ -550,14 +550,68 @@ response = client.chat.completions.create(
       navigator.clipboard.writeText(el.textContent);
     }
 
+    // API Key Management
+    function getStoredKey() { return localStorage.getItem('zka-api-key') || ''; }
+    function setStoredKey(k) { localStorage.setItem('zka-api-key', k); }
+
+    // Load saved key on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = getStoredKey();
+      const field = document.getElementById('api-key-field');
+      if (saved && field) {
+        field.value = saved;
+        showKeyStatus('Key loaded', 'ok');
+      }
+    });
+
+    function showKeyStatus(msg, cls) {
+      const el = document.getElementById('api-key-status');
+      if (el) { el.textContent = msg; el.className = 'api-key-status ' + (cls || ''); }
+    }
+
+    function saveApiKey() {
+      const field = document.getElementById('api-key-field');
+      const key = field.value.trim();
+      if (!key) { showKeyStatus('Enter a key first', 'err'); return; }
+      setStoredKey(key);
+      showKeyStatus('Key saved ✓', 'ok');
+    }
+
+    async function getFreeKey() {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = 'Creating...';
+      showKeyStatus('', '');
+      try {
+        const r = await fetch(BASE + '/v1/keys/free', { method: 'POST' });
+        const d = await r.json();
+        if (d.key) {
+          document.getElementById('api-key-field').value = d.key;
+          setStoredKey(d.key);
+          showKeyStatus('Free key created ✓ (9 msgs / 3 hours)', 'ok');
+        } else {
+          showKeyStatus('Error: ' + (d.detail || 'Unknown'), 'err');
+        }
+      } catch (e) {
+        showKeyStatus('Error: ' + e.message, 'err');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Get Free Test Key';
+    }
+
     // Playground
     async function sendPlay() {
       const msg = document.getElementById('play-msg').value;
       const btn = document.getElementById('play-btn');
       const resp = document.getElementById('play-resp');
       const model = document.getElementById('model-sel').value;
-      const key = prompt('Enter your API key:');
-      if (!key) return;
+      const key = getStoredKey();
+      if (!key) {
+        resp.style.display = 'block';
+        resp.textContent = '❌ No API key. Enter your key below or get a free test key.';
+        document.getElementById('api-key-field').focus();
+        return;
+      }
 
       btn.disabled = true;
       btn.textContent = 'Sending...';

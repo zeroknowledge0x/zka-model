@@ -1,228 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZK API — AI Inference Gateway</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
-            background: #0a0a0a;
-            color: #e0e0e0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .container {
-            max-width: 680px;
-            padding: 40px 30px;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2.5rem;
-            color: #00ff88;
-            margin-bottom: 8px;
-            letter-spacing: -1px;
-        }
-        .subtitle {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 40px;
-        }
-        .card {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .card h3 {
-            color: #00ff88;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 16px;
-        }
-        .endpoint {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 14px 16px;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 0.85rem;
-            color: #aaa;
-            margin-bottom: 10px;
-            word-break: break-all;
-        }
-        .endpoint .label {
-            color: #666;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            display: block;
-            margin-bottom: 6px;
-        }
-        .endpoint .value {
-            color: #00ff88;
-            user-select: all;
-            cursor: pointer;
-        }
-        .endpoint .value:hover { text-decoration: underline; }
-        .models {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
-        .model-tag {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 6px;
-            padding: 8px 14px;
-            font-size: 0.8rem;
-        }
-        .model-tag .name { color: #00ff88; font-weight: bold; }
-        .model-tag .desc { color: #666; font-size: 0.7rem; display: block; margin-top: 2px; }
-        .code-block {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 16px;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 0.8rem;
-            color: #aaa;
-            overflow-x: auto;
-            text-align: left;
-            white-space: pre;
-            line-height: 1.6;
-            position: relative;
-        }
-        .code-block .kw { color: #ff79c6; }
-        .code-block .fn { color: #50fa7b; }
-        .code-block .str { color: #f1fa8c; }
-        .code-block .cm { color: #6272a4; }
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #222;
-            border: 1px solid #333;
-            color: #888;
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.7rem;
-        }
-        .copy-btn:hover { background: #333; color: #ccc; }
-        .status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #00ff88;
-            font-size: 0.85rem;
-        }
-        .dot {
-            width: 8px; height: 8px;
-            background: #00ff88;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        .playground {
-            margin-top: 20px;
-        }
-        .playground textarea {
-            width: 100%;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 12px;
-            color: #e0e0e0;
-            font-family: inherit;
-            font-size: 0.9rem;
-            resize: vertical;
-            min-height: 60px;
-        }
-        .playground textarea:focus { outline: none; border-color: #00ff88; }
-        .playground button {
-            background: #00ff88;
-            color: #0a0a0a;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 0.9rem;
-        }
-        .playground button:hover { background: #00cc6a; }
-        .playground button:disabled { background: #333; color: #666; cursor: wait; }
-        .response-box {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 14px;
-            margin-top: 10px;
-            font-size: 0.85rem;
-            color: #aaa;
-            min-height: 40px;
-            white-space: pre-wrap;
-            display: none;
-        }
-        footer {
-            margin-top: 40px;
-            color: #333;
-            font-size: 0.75rem;
-        }
-        footer a { color: #555; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZKA Agent — AI Inference Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #030303;
+      --surface: #0a0a0a;
+      --surface-2: #0f0f0f;
+      --surface-3: #141414;
+      --border: #1a1a1a;
+      --border-hover: #252525;
+      --text: #eaeaea;
+      --text-2: #999;
+      --text-3: #555;
+      --green: #00ff88;
+      --green-2: #00cc6a;
+      --green-dim: rgba(0,255,136,0.06);
+      --green-glow: rgba(0,255,136,0.12);
+      --green-border: rgba(0,255,136,0.15);
+      --font: 'Inter', -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', 'SF Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection { background: var(--green); color: var(--bg); }
+
+    /* ── LOADER ── */
+    #loader {
+      position: fixed; inset: 0; z-index: 10000;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.6s, visibility 0.6s;
+    }
+    #loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-logo { font-family: var(--mono); font-size: 28px; font-weight: 600; margin-bottom: 24px; }
+    .loader-logo .g { color: var(--green); }
+    .loader-track { width: 160px; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
+    .loader-bar { height: 100%; background: var(--green); width: 0; animation: load 1.6s ease forwards; }
+    @keyframes load { 0%{width:0} 50%{width:60%} 100%{width:100%} }
+    .loader-text { font-family: var(--mono); font-size: 10px; color: var(--text-3); margin-top: 14px; letter-spacing: 3px; }
+
+    /* ── BG ── */
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .bg-noise {
+      position: fixed; inset: 0; z-index: 1; opacity: 0.02; pointer-events: none;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+    .orb-1 { width: 350px; height: 350px; background: rgba(0,255,136,0.04); top: -80px; right: -60px; animation: f1 20s ease-in-out infinite; }
+    .orb-2 { width: 250px; height: 250px; background: rgba(0,255,136,0.03); bottom: 30%; left: -60px; animation: f2 25s ease-in-out infinite; }
+    @keyframes f1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,50px)} }
+    @keyframes f2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,-30px)} }
+    #particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+
+    /* ── LAYOUT ── */
+    .content { position: relative; z-index: 10; }
+    .container { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(3,3,3,0.75); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px; margin: 0 auto; padding: 0 32px;
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-family: var(--mono); font-size: 15px; font-weight: 600; color: var(--text); text-decoration: none; }
+    .nav-logo .g { color: var(--green); }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a { color: var(--text-2); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.15s; }
+    .nav-links a:hover { color: var(--green); }
+
+    /* ── SECTIONS ── */
+    section { padding: 100px 0; }
+    .section-label {
+      font-family: var(--mono); font-size: 11px; font-weight: 500;
+      color: var(--green); text-transform: uppercase; letter-spacing: 3px;
+      margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::before { content: ''; width: 20px; height: 1px; background: var(--green); }
+    .section-title {
+      font-size: clamp(28px, 4vw, 40px); font-weight: 800;
+      letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 14px;
+    }
+    .section-desc { font-size: 15px; color: var(--text-2); max-width: 500px; line-height: 1.7; }
+    .green { color: var(--green); }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s, transform 0.7s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── HERO ── */
+    #hero { min-height: 100vh; display: flex; align-items: center; position: relative; }
+    .hero-glow {
+      position: absolute; top: 35%; left: 50%; transform: translate(-50%,-50%);
+      width: 600px; height: 350px;
+      background: radial-gradient(ellipse, var(--green-glow) 0%, transparent 65%);
+      opacity: 0.45; pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 10; }
+    .hero-eyebrow {
+      font-family: var(--mono); font-size: 12px; color: var(--green);
+      letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+      opacity: 0; animation: fadeUp 0.7s ease 1.8s forwards;
+    }
+    .hero-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--green); }
+    .hero-title {
+      font-size: clamp(44px, 7vw, 80px); font-weight: 900;
+      letter-spacing: -3px; line-height: 0.95; margin-bottom: 24px;
+      opacity: 0; animation: fadeUp 0.7s ease 2s forwards;
+    }
+    .hero-sub {
+      font-size: 17px; color: var(--text-2); max-width: 480px;
+      line-height: 1.7; margin-bottom: 40px;
+      opacity: 0; animation: fadeUp 0.7s ease 2.2s forwards;
+    }
+    .hero-ctas {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.7s ease 2.4s forwards;
+    }
+    .hero-status {
+      margin-top: 32px; display: flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: 12px; color: var(--green);
+      opacity: 0; animation: fadeUp 0.7s ease 2.6s forwards;
+    }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1; box-shadow:0 0 8px rgba(0,255,136,0.4)} 50%{opacity:0.5; box-shadow:none} }
+
+    .hero-scroll {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      font-family: var(--mono); font-size: 10px; color: var(--text-3);
+      letter-spacing: 2px; text-transform: uppercase;
+      opacity: 0; animation: fadeIn 1s ease 3s forwards;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .scroll-line { width: 1px; height: 32px; background: linear-gradient(to bottom, var(--green), transparent); animation: sp 2s ease-in-out infinite; }
+    @keyframes sp { 0%,100%{opacity:0.3} 50%{opacity:1} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(25px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px; border-radius: 8px; font-size: 14px;
+      font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--green); color: var(--bg); }
+    .btn-primary:hover { box-shadow: 0 0 28px rgba(0,255,136,0.25); transform: translateY(-1px); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--green-border); color: var(--green); }
+
+    /* ── MODELS ── */
+    .models-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 40px; }
+    .model-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px; transition: all 0.2s; position: relative; overflow: hidden;
+    }
+    .model-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .model-card:hover { border-color: var(--green-border); }
+    .model-card:hover::before { opacity: 1; }
+    .model-name { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+    .model-desc { font-size: 13px; color: var(--text-2); margin-bottom: 12px; }
+    .model-tag {
+      font-family: var(--mono); font-size: 10px; padding: 3px 8px;
+      border-radius: 4px; background: var(--green-dim); color: var(--green);
+      border: 1px solid var(--green-border); text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    /* ── ENDPOINT ── */
+    .endpoint-block {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px; margin-top: 32px;
+    }
+    .endpoint-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 0; border-bottom: 1px solid var(--border);
+    }
+    .endpoint-row:last-child { border-bottom: none; }
+    .endpoint-label { font-size: 13px; color: var(--text-3); min-width: 100px; }
+    .endpoint-value {
+      font-family: var(--mono); font-size: 13px; color: var(--green);
+      cursor: pointer; transition: opacity 0.15s; user-select: all;
+    }
+    .endpoint-value:hover { opacity: 0.7; }
+
+    /* ── CODE ── */
+    .code-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden; margin-top: 16px;
+    }
+    .code-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+    }
+    .code-header span { font-family: var(--mono); font-size: 12px; color: var(--text-3); }
+    .copy-btn {
+      font-family: var(--mono); font-size: 11px; padding: 4px 10px;
+      border-radius: 5px; background: var(--surface-3); border: 1px solid var(--border);
+      color: var(--text-2); cursor: pointer; transition: all 0.15s;
+    }
+    .copy-btn:hover { border-color: var(--green-border); color: var(--green); }
+    .code-body {
+      padding: 20px; font-family: var(--mono); font-size: 13px;
+      line-height: 1.8; color: var(--text-2); overflow-x: auto; white-space: pre;
+    }
+    .code-body .kw { color: #ff79c6; }
+    .code-body .fn { color: var(--green); }
+    .code-body .str { color: #f1fa8c; }
+    .code-body .cm { color: #6272a4; }
+    .code-body .num { color: #bd93f9; }
+
+    /* ── PLAYGROUND ── */
+    .playground-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px; margin-top: 32px;
+    }
+    .playground-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+    }
+    .playground-header h3 { font-size: 16px; font-weight: 700; }
+    .playground-header .model-select {
+      font-family: var(--mono); font-size: 12px; padding: 6px 12px;
+      background: var(--surface-3); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--green); cursor: pointer;
+    }
+    .playground-header .model-select:focus { outline: none; border-color: var(--green-border); }
+    .play-input {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px; color: var(--text);
+      font-family: var(--font); font-size: 14px; resize: vertical; min-height: 80px;
+    }
+    .play-input:focus { outline: none; border-color: var(--green-border); }
+    .play-input::placeholder { color: var(--text-3); }
+    .play-actions { display: flex; justify-content: flex-end; margin-top: 12px; }
+    .play-response {
+      margin-top: 16px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px; font-size: 14px; color: var(--text-2);
+      line-height: 1.7; white-space: pre-wrap; min-height: 48px; display: none;
+    }
+
+    /* ── CONTACT ── */
+    .contact-card {
+      background: var(--surface); border: 1px solid var(--green-border);
+      border-radius: 12px; padding: 40px; text-align: center; margin-top: 40px;
+      position: relative; overflow: hidden;
+    }
+    .contact-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+    }
+    .contact-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .contact-card p { font-size: 14px; color: var(--text-2); margin-bottom: 20px; }
+    .contact-links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .contact-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: all 0.2s;
+      background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border);
+    }
+    .contact-link:hover { background: rgba(0,255,136,0.1); }
+
+    /* ── FOOTER ── */
+    footer { padding: 40px 0; border-top: 1px solid var(--border); }
+    .footer-inner {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-brand { font-family: var(--mono); font-size: 13px; color: var(--text-3); }
+    .footer-brand .g { color: var(--green); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { color: var(--text-3); text-decoration: none; font-size: 12px; font-weight: 500; transition: color 0.15s; }
+    .footer-links a:hover { color: var(--green); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      section { padding: 70px 0; }
+      .container { padding: 0 20px; }
+      .nav-inner { padding: 0 20px; }
+      .models-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>ZK API</h1>
-        <p class="subtitle">AI Inference Gateway · OpenAI-Compatible</p>
 
-        <div class="card">
-            <h3>🔌 Endpoint</h3>
-            <div class="endpoint">
-                <span class="label">Base URL</span>
-                <span class="value" onclick="copyText(this)" id="base-url"></span>
-            </div>
-            <div class="endpoint">
-                <span class="label">API Key</span>
-                <span class="value">Contact <a href="https://t.me/zeroknowledge0x" style="color:#00ff88">@zeroknowledge0x</a> for access</span>
-            </div>
-            <div style="margin-top: 10px;">
-                <span class="status"><span class="dot"></span> Operational</span>
-            </div>
+  <div id="loader">
+    <div class="loader-logo">ZK<span class="g">A</span> Agent</div>
+    <div class="loader-track"><div class="loader-bar"></div></div>
+    <div class="loader-text">LOADING</div>
+  </div>
+
+  <div class="bg-grid"></div>
+  <div class="bg-noise"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <canvas id="particles"></canvas>
+
+  <div class="content">
+
+    <!-- NAV -->
+    <nav>
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">ZK<span class="g">A</span></a>
+        <ul class="nav-links">
+          <li><a href="#models">Models</a></li>
+          <li><a href="#api">API</a></li>
+          <li><a href="#playground">Try It</a></li>
+          <li><a href="https://zeroknowledge0x.github.io/ZKA-Labs/">← Back</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-glow"></div>
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-eyebrow">AI Inference Platform</div>
+          <h1 class="hero-title">ZK<span class="green">Agent</span></h1>
+          <p class="hero-sub">Multi-model AI platform. Three models, one API. OpenAI-compatible, streaming ready, built for production.</p>
+          <div class="hero-ctas">
+            <a href="#api" class="btn btn-primary">Get Started ↓</a>
+            <a href="#playground" class="btn btn-ghost">Try It Live</a>
+          </div>
+          <div class="hero-status">
+            <span class="status-dot"></span>
+            All systems operational
+          </div>
+        </div>
+      </div>
+      <div class="hero-scroll">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- MODELS -->
+    <section id="models">
+      <div class="container">
+        <div class="reveal">
+          <div class="section-label">Models</div>
+          <h2 class="section-title">Three models, <span class="green">one API</span></h2>
+          <p class="section-desc">Choose the right model for your workload. From flagship reasoning to lightweight tasks.</p>
+        </div>
+        <div class="models-grid">
+          <div class="model-card reveal">
+            <div class="model-name">zk-v3z</div>
+            <div class="model-desc">Flagship model. Best quality reasoning, complex tasks, and detailed responses.</div>
+            <span class="model-tag">Flagship</span>
+          </div>
+          <div class="model-card reveal">
+            <div class="model-name">zk-v2b</div>
+            <div class="model-desc">Balanced model. Good quality with faster response times for general use.</div>
+            <span class="model-tag">Balanced</span>
+          </div>
+          <div class="model-card reveal">
+            <div class="model-name">zk-v1b</div>
+            <div class="model-desc">Lightweight model. Fast inference for simple tasks and high-throughput workloads.</div>
+            <span class="model-tag">Lightweight</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API -->
+    <section id="api">
+      <div class="container">
+        <div class="reveal">
+          <div class="section-label">API</div>
+          <h2 class="section-title">Get <span class="green">started</span></h2>
+          <p class="section-desc">OpenAI-compatible endpoint. Works with any OpenAI SDK or client library.</p>
         </div>
 
-        <div class="card">
-            <h3>🧠 Models</h3>
-            <div class="models">
-                <div class="model-tag">
-                    <span class="name">zk-v3z</span>
-                    <span class="desc">Flagship · Best quality</span>
-                </div>
-                <div class="model-tag">
-                    <span class="name">zk-v1b</span>
-                    <span class="desc">Fast · Lightweight</span>
-                </div>
-                <div class="model-tag">
-                    <span class="name">zk-v2b</span>
-                    <span class="desc">Balanced · General use</span>
-                </div>
-            </div>
+        <div class="endpoint-block reveal">
+          <div class="endpoint-row">
+            <span class="endpoint-label">Base URL</span>
+            <span class="endpoint-value" id="base-url" onclick="copyText(this)">—</span>
+          </div>
+          <div class="endpoint-row">
+            <span class="endpoint-label">Endpoint</span>
+            <span class="endpoint-value">/v1/chat/completions</span>
+          </div>
+          <div class="endpoint-row">
+            <span class="endpoint-label">Auth</span>
+            <span class="endpoint-value">Bearer YOUR_API_KEY</span>
+          </div>
+          <div class="endpoint-row">
+            <span class="endpoint-label">Access</span>
+            <span class="endpoint-value" style="color: var(--text-2);">Contact for API key →</span>
+          </div>
         </div>
 
-        <div class="card">
-            <h3>⚡ Quick Start — Python</h3>
-            <div class="code-block" id="code-python"><button class="copy-btn" onclick="copyCode('code-python')">copy</button><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+        <!-- Python -->
+        <div class="code-card reveal" style="margin-top: 24px;">
+          <div class="code-header">
+            <span>Python</span>
+            <button class="copy-btn" onclick="copyCode('code-py')">copy</button>
+          </div>
+          <div class="code-body" id="code-py"><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
 
 client = OpenAI(
     base_url=<span class="str" id="py-url">"..."</span>,
@@ -233,87 +439,192 @@ response = client.chat.completions.create(
     model=<span class="str">"zk-v3z"</span>,
     messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Hello!"</span>}]
 )
-<span class="kw">print</span>(response.choices[0].message.content)</div>
+<span class="kw">print</span>(response.choices[<span class="num">0</span>].message.content)</div>
         </div>
 
-        <div class="card">
-            <h3>📡 Quick Start — curl</h3>
-            <div class="code-block" id="code-curl"><button class="copy-btn" onclick="copyCode('code-curl')">copy</button>curl -X POST <span id="curl-url">...</span>/v1/chat/completions \
+        <!-- curl -->
+        <div class="code-card reveal">
+          <div class="code-header">
+            <span>curl</span>
+            <button class="copy-btn" onclick="copyCode('code-curl')">copy</button>
+          </div>
+          <div class="code-body" id="code-curl">curl <span id="curl-url">...</span>/v1/chat/completions \
   -H <span class="str">"Authorization: Bearer YOUR_API_KEY"</span> \
   -H <span class="str">"Content-Type: application/json"</span> \
   -d <span class="str">'{"model":"zk-v3z","messages":[{"role":"user","content":"Hi"}]}'</span></div>
         </div>
+      </div>
+    </section>
 
-        <div class="card playground">
-            <h3>🎮 Try It</h3>
-            <textarea id="user-msg" placeholder="Type a message...">Siapa kamu?</textarea>
-            <button onclick="sendMsg()" id="send-btn">Send</button>
-            <div class="response-box" id="response-box"></div>
+    <!-- PLAYGROUND -->
+    <section id="playground">
+      <div class="container">
+        <div class="reveal">
+          <div class="section-label">Playground</div>
+          <h2 class="section-title">Try it <span class="green">live</span></h2>
         </div>
+        <div class="playground-card reveal">
+          <div class="playground-header">
+            <h3>🧪 Test ZK Agent</h3>
+            <select class="model-select" id="model-sel">
+              <option value="zk-v3z">zk-v3z (Flagship)</option>
+              <option value="zk-v2b">zk-v2b (Balanced)</option>
+              <option value="zk-v1b">zk-v1b (Lightweight)</option>
+            </select>
+          </div>
+          <textarea class="play-input" id="play-msg" placeholder="Type a message...">Siapa kamu?</textarea>
+          <div class="play-actions">
+            <button class="btn btn-primary" id="play-btn" onclick="sendPlay()">Send →</button>
+          </div>
+          <div class="play-response" id="play-resp"></div>
+        </div>
+      </div>
+    </section>
 
-        <footer>
-            Built by <a href="https://github.com/zeroknowledge0x">@zeroknowledge0x</a> ·
-            <a href="https://twitter.com/zeroknowledge0x">@zeroknowledge0x</a>
-        </footer>
-    </div>
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="container">
+        <div class="contact-card reveal">
+          <h3>Get API Access</h3>
+          <p>Contact to request an API key. Free for developers.</p>
+          <div class="contact-links">
+            <a href="https://t.me/zeroknowledge0x" class="contact-link" target="_blank">💬 Telegram</a>
+            <a href="https://twitter.com/zeroknowledge0x" class="contact-link" target="_blank">𝕏 Twitter</a>
+            <a href="https://github.com/zeroknowledge0x" class="contact-link" target="_blank">⌘ GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <script>
-        // Base URL — update this if ngrok URL changes
-        const BASE = 'https://reptile-murkiness-grape.ngrok-free.dev';
-        
-        // Fill in URLs
-        document.getElementById('base-url').textContent = BASE + '/v1';
-        document.getElementById('py-url').textContent = '"' + BASE + '/v1"';
-        document.getElementById('curl-url').textContent = BASE;
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+        <div class="footer-inner">
+          <span class="footer-brand">ZK<span class="g">A</span> Agent &copy; 2026</span>
+          <div class="footer-links">
+            <a href="https://zeroknowledge0x.github.io/ZKA-Labs/">ZKA Labs</a>
+            <a href="https://github.com/zeroknowledge0x/zk-api">GitHub</a>
+            <a href="https://twitter.com/zeroknowledge0x">Twitter</a>
+          </div>
+        </div>
+      </div>
+    </footer>
 
-        function copyText(el) {
-            navigator.clipboard.writeText(el.textContent);
-            el.style.color = '#fff';
-            setTimeout(() => el.style.color = '#00ff88', 500);
+  </div>
+
+  <script>
+    // Config
+    const BASE = 'https://reptile-murkiness-grape.ngrok-free.dev';
+
+    // Fill URLs
+    document.getElementById('base-url').textContent = BASE + '/v1';
+    document.getElementById('py-url').textContent = '"' + BASE + '/v1"';
+    document.getElementById('curl-url').textContent = 'POST ' + BASE;
+
+    // Loader
+    window.addEventListener('load', () => {
+      setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1800);
+    });
+
+    // Reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          obs.unobserve(e.target);
         }
+      });
+    }, { threshold: 0.15 });
+    reveals.forEach(el => obs.observe(el));
 
-        function copyCode(id) {
-            const el = document.getElementById(id);
-            const text = el.textContent.replace('copy', '').trim();
-            navigator.clipboard.writeText(text);
+    // Copy
+    function copyText(el) {
+      navigator.clipboard.writeText(el.textContent);
+      const orig = el.style.color;
+      el.style.color = '#fff';
+      setTimeout(() => el.style.color = '', 400);
+    }
+    function copyCode(id) {
+      const el = document.getElementById(id);
+      navigator.clipboard.writeText(el.textContent);
+    }
+
+    // Playground
+    async function sendPlay() {
+      const msg = document.getElementById('play-msg').value;
+      const btn = document.getElementById('play-btn');
+      const resp = document.getElementById('play-resp');
+      const model = document.getElementById('model-sel').value;
+      const key = prompt('Enter your API key:');
+      if (!key) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      resp.style.display = 'block';
+      resp.textContent = '⏳ Waiting for response...';
+
+      try {
+        const r = await fetch(BASE + '/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+          body: JSON.stringify({ model, messages: [{ role: 'user', content: msg }], max_tokens: 300 })
+        });
+        const d = await r.json();
+        resp.textContent = d.choices ? d.choices[0].message.content : '❌ Error: ' + JSON.stringify(d);
+      } catch (e) {
+        resp.textContent = '❌ Error: ' + e.message;
+      }
+      btn.disabled = false;
+      btn.textContent = 'Send →';
+    }
+
+    // Particles
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let pts = [];
+    function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+    resize(); addEventListener('resize', resize);
+
+    class Pt {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.25;
+        this.vy = (Math.random() - 0.5) * 0.25;
+        this.s = Math.random() * 1.5 + 0.5;
+        this.o = Math.random() * 0.25 + 0.05;
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+      }
+      draw() {
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0,255,136,${this.o})`; ctx.fill();
+      }
+    }
+    for (let i = 0; i < 50; i++) pts.push(new Pt());
+
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pts.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
+          if (d < 140) {
+            ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.strokeStyle = `rgba(0,255,136,${0.025 * (1 - d / 140)})`;
+            ctx.lineWidth = 0.5; ctx.stroke();
+          }
         }
+      }
+      requestAnimationFrame(loop);
+    }
+    loop();
+  </script>
 
-        async function sendMsg() {
-            const msg = document.getElementById('user-msg').value;
-            const btn = document.getElementById('send-btn');
-            const box = document.getElementById('response-box');
-            
-            btn.disabled = true;
-            btn.textContent = 'Sending...';
-            box.style.display = 'block';
-            box.textContent = '⏳ Waiting for response...';
-
-            try {
-                const resp = await fetch(BASE + '/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + prompt('Enter your API key:')
-                    },
-                    body: JSON.stringify({
-                        model: 'zk-v3z',
-                        messages: [{role: 'user', content: msg}],
-                        max_tokens: 200
-                    })
-                });
-                const data = await resp.json();
-                if (data.choices) {
-                    box.textContent = '🤖 ' + data.choices[0].message.content;
-                } else {
-                    box.textContent = '❌ Error: ' + JSON.stringify(data);
-                }
-            } catch (e) {
-                box.textContent = '❌ Error: ' + e.message;
-            }
-            
-            btn.disabled = false;
-            btn.textContent = 'Send';
-        }
-    </script>
 </body>
 </html>

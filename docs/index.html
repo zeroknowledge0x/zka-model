@@ -563,14 +563,12 @@ response = client.chat.completions.create(
     function getStoredKey() { return localStorage.getItem('zka-api-key') || ''; }
     function setStoredKey(k) { localStorage.setItem('zka-api-key', k); }
 
-    // Load saved key on page load
+    // Load saved key on page load (default: zk-tested)
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = getStoredKey();
+      let saved = getStoredKey();
+      if (!saved) { saved = 'zk-tested'; setStoredKey(saved); }
       const field = document.getElementById('api-key-field');
-      if (saved && field) {
-        field.value = saved;
-        showKeyStatus('Key loaded', 'ok');
-      }
+      if (field) { field.value = saved; showKeyStatus('Key loaded', 'ok'); }
     });
 
     function showKeyStatus(msg, cls) {

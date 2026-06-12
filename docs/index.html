@@ -369,7 +369,113 @@
       .container { padding: 0 20px; }
       .nav-inner { padding: 0 20px; }
       .models-grid { grid-template-columns: 1fr; }
+      .pg-main { flex-direction: column !important; }
+      .pg-editor-wrapper, .pg-output-wrapper { min-height: 250px; }
+      .pg-toolbar { flex-wrap: wrap; }
     }
+
+    /* ── PLAYGROUND ── */
+    .pg-toolbar {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 12px 0; margin-bottom: 8px;
+    }
+    .pg-select {
+      font-family: var(--mono); font-size: 12px; padding: 7px 12px;
+      background: var(--surface-3); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--green); cursor: pointer; outline: none;
+    }
+    .pg-select option { background: var(--surface-3); color: var(--text); }
+    .pg-btn {
+      font-family: var(--mono); font-size: 12px; padding: 7px 16px;
+      border-radius: 6px; border: 1px solid var(--border); cursor: pointer;
+      font-weight: 600; transition: all 0.15s;
+    }
+    .pg-btn-run { background: var(--green); color: #000; border-color: var(--green); }
+    .pg-btn-run:hover { box-shadow: 0 0 16px rgba(0,255,136,0.3); }
+    .pg-btn-ai { background: var(--green-dim); color: var(--green); border-color: var(--green-border); }
+    .pg-btn-ai:hover { background: rgba(0,255,136,0.12); }
+    .pg-btn-clear { background: transparent; color: var(--text-3); border-color: var(--border); }
+    .pg-btn-clear:hover { border-color: #f44; color: #f44; }
+    .pg-rate { font-family: var(--mono); font-size: 11px; color: var(--text-3); margin-left: auto; }
+    .pg-rate strong { color: var(--green); }
+    .pg-main {
+      display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden; min-height: 400px;
+    }
+    .pg-editor-wrapper {
+      flex: 1; display: flex; background: var(--surface); min-width: 0; position: relative;
+    }
+    .pg-gutter {
+      width: 40px; padding: 14px 8px 14px 0; text-align: right;
+      font-family: var(--mono); font-size: 13px; line-height: 1.6;
+      color: var(--text-3); user-select: none; overflow: hidden;
+      background: var(--surface); border-right: 1px solid var(--border);
+    }
+    .pg-textarea {
+      flex: 1; background: transparent; border: none; color: var(--text);
+      font-family: var(--mono); font-size: 13px; line-height: 1.6;
+      padding: 14px; resize: none; outline: none; tab-size: 2;
+      min-height: 400px;
+    }
+    .pg-textarea::placeholder { color: var(--text-3); }
+    .pg-output-wrapper {
+      flex: 1; background: var(--surface); display: flex;
+      flex-direction: column; min-width: 0;
+    }
+    .pg-output-header {
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      font-family: var(--mono); font-size: 11px; color: var(--text-3);
+      display: flex; align-items: center; gap: 8px; text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .pg-output-header .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .pg-output-header .dot-idle { background: var(--text-3); }
+    .pg-output-header .dot-run { background: var(--green); animation: pulse 1s infinite; }
+    .pg-output-header .dot-err { background: #f44; }
+    .pg-output-body {
+      flex: 1; padding: 14px; overflow: auto; font-family: var(--mono);
+      font-size: 13px; line-height: 1.6; color: var(--text-2); white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .pg-output-body::-webkit-scrollbar { width: 4px; }
+    .pg-output-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .pg-output-body .err { color: #f44; }
+    .pg-output-body .ok { color: var(--green); }
+    .pg-iframe-wrap { flex: 1; border: none; }
+    .pg-iframe-wrap iframe { width: 100%; height: 100%; border: none; background: #fff; }
+    .pg-ai-input-row {
+      display: flex; gap: 8px; margin-top: 8px;
+    }
+    .pg-ai-input {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 12px; color: var(--text);
+      font-family: var(--font); font-size: 13px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .pg-ai-input:focus { border-color: var(--green-border); }
+    .pg-ai-input::placeholder { color: var(--text-3); }
+    .pg-chat {
+      margin-top: 24px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .pg-chat-msg {
+      padding: 12px 16px; border-radius: 12px; font-size: 14px;
+      line-height: 1.6; animation: bubbleIn 0.2s ease; max-width: 90%;
+    }
+    .pg-chat-user {
+      align-self: flex-end; background: var(--green); color: #000;
+      border-bottom-right-radius: 4px;
+    }
+    .pg-chat-ai {
+      align-self: flex-start; background: var(--surface-3); color: var(--text);
+      border: 1px solid var(--border); border-bottom-left-radius: 4px;
+    }
+    .pg-chat-label {
+      font-size: 10px; color: var(--text-3); margin-bottom: 4px;
+      font-family: var(--mono); text-transform: uppercase; letter-spacing: 1px;
+    }
+    .pg-chat-user .pg-chat-label { color: rgba(0,0,0,0.5); text-align: right; }
+    .pg-chat-ai .pg-chat-label { color: var(--green); }
+    .pg-chat-typing { opacity: 0.6; font-style: italic; }
   </style>
 </head>
 <body>
@@ -521,34 +627,42 @@ response = client.chat.completions.create(
         <div class="reveal">
           <div class="section-label">Playground</div>
           <h2 class="section-title">Try it <span class="green">live</span></h2>
+          <p class="section-desc">Write and run code, then ask ZKA to explain or review it.</p>
         </div>
-        <div class="chat-card reveal">
-          <div class="chat-top">
-            <div class="chat-top-left">
-              <div class="chat-avatar">Z</div>
-              <div>
-                <div class="chat-name">ZKA</div>
-                <div class="chat-status"><span class="status-dot"></span> Online</div>
+
+        <div class="reveal" style="margin-top: 32px;">
+          <div class="pg-toolbar">
+            <select class="pg-select" id="pg-lang">
+              <option value="javascript">JavaScript</option>
+              <option value="python">Python</option>
+              <option value="html">HTML/CSS</option>
+              <option value="bash">Bash</option>
+            </select>
+            <button class="pg-btn pg-btn-run" id="pg-run-btn" onclick="pgRun()">▶ Run</button>
+            <button class="pg-btn pg-btn-ai" id="pg-ai-btn" onclick="pgAskAI()">Ask ZKA</button>
+            <button class="pg-btn pg-btn-clear" onclick="pgClear()">Clear</button>
+            <span class="pg-rate" id="pg-rate">AI: <strong>9</strong>/9 left</span>
+          </div>
+
+          <div class="pg-main">
+            <div class="pg-editor-wrapper">
+              <div class="pg-gutter" id="pg-gutter">1</div>
+              <textarea class="pg-textarea" id="pg-editor" spellcheck="false" placeholder="// Write your code here..."></textarea>
+            </div>
+            <div class="pg-output-wrapper" id="pg-output-wrap">
+              <div class="pg-output-header">
+                <span class="dot dot-idle" id="pg-dot"></span>
+                <span id="pg-output-label">Output</span>
               </div>
-            </div>
-            <div class="chat-top-right">
-              <select class="model-select" id="model-sel">
-                <option value="zk-v3z">zk-v3z</option>
-                <option value="zk-v2b">zk-v2b</option>
-                <option value="zk-v1b">zk-v1b</option>
-              </select>
-              <button class="chat-clear" onclick="clearChat()" title="Clear history">Clear</button>
+              <div class="pg-output-body" id="pg-output">Press Run to execute your code...</div>
             </div>
           </div>
-          <div class="chat-messages" id="chat-box"></div>
-          <div class="chat-input-row">
-            <input type="text" class="chat-input" id="chat-msg" placeholder="Type a message..." />
-            <button class="chat-send" id="chat-btn" onclick="sendChat()">→</button>
+
+          <div class="pg-ai-input-row">
+            <input type="text" class="pg-ai-input" id="pg-ai-msg" placeholder="Optional: ask a question about your code..." />
           </div>
-          <div class="chat-footer">
-            <span>Test API Key: <strong>zk-tested</strong></span>
-            <span id="chat-key-status"></span>
-          </div>
+
+          <div class="pg-chat" id="pg-chat"></div>
         </div>
       </div>
     </section>
@@ -622,115 +736,267 @@ response = client.chat.completions.create(
       navigator.clipboard.writeText(el.textContent);
     }
 
-    // Chat state
-    const CHAT_KEY = 'zka-chat-history';
-    const API_KEY = 'zka-api-key';
-    let chatHistory = [];
-    let isSending = false;
+    // ── PLAYGROUND ──
+    const PG_LANG_KEY = 'zka-pg-lang';
+    const PG_CODE_KEY = 'zka-pg-code';
+    const PG_CHAT_KEY = 'zka-pg-chat';
+    const PG_RATE_KEY = 'zka-pg-rate';
+    const PG_RATE_MAX = 9;
+    const PG_RATE_WINDOW = 3 * 60 * 60 * 1000; // 3 hours
 
-    function getStoredKey() { return localStorage.getItem(API_KEY) || ''; }
-    function setStoredKey(k) { localStorage.setItem(API_KEY, k); }
-    function loadHistory() { try { return JSON.parse(localStorage.getItem(CHAT_KEY)) || []; } catch { return []; } }
-    function saveHistory() { localStorage.setItem(CHAT_KEY, JSON.stringify(chatHistory)); }
-
-    function addBubble(role, text) {
-      const box = document.getElementById('chat-box');
-      const div = document.createElement('div');
-      div.className = 'chat-bubble ' + (role === 'user' ? 'bubble-user' : 'bubble-zka');
-      const label = document.createElement('div');
-      label.className = 'bubble-label';
-      label.textContent = role === 'user' ? 'You' : 'ZKA';
-      div.appendChild(label);
-      div.appendChild(document.createTextNode(text));
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-      return div;
+    // Rate limiting
+    function pgGetRateData() {
+      try {
+        const d = JSON.parse(localStorage.getItem(PG_RATE_KEY));
+        if (!d || !d.resetAt) return { count: 0, resetAt: Date.now() + PG_RATE_WINDOW };
+        if (Date.now() > d.resetAt) return { count: 0, resetAt: Date.now() + PG_RATE_WINDOW };
+        return d;
+      } catch { return { count: 0, resetAt: Date.now() + PG_RATE_WINDOW }; }
+    }
+    function pgUseRate() {
+      const d = pgGetRateData();
+      if (d.count >= PG_RATE_MAX) return false;
+      d.count++;
+      localStorage.setItem(PG_RATE_KEY, JSON.stringify(d));
+      pgUpdateRateUI();
+      return true;
+    }
+    function pgUpdateRateUI() {
+      const d = pgGetRateData();
+      const remaining = PG_RATE_MAX - d.count;
+      const el = document.getElementById('pg-rate');
+      el.innerHTML = 'AI: <strong>' + remaining + '</strong>/' + PG_RATE_MAX + ' left';
+      if (remaining <= 2) el.querySelector('strong').style.color = '#f44';
+      else el.querySelector('strong').style.color = '';
     }
 
-    function renderHistory() {
-      const box = document.getElementById('chat-box');
-      box.innerHTML = '';
-      if (chatHistory.length === 0) {
-        const hint = document.createElement('div');
-        hint.style.cssText = 'text-align:center;color:var(--text-3);font-size:13px;padding:40px 0;';
-        hint.textContent = 'Send a message to start chatting';
-        box.appendChild(hint);
-        return;
-      }
-      chatHistory.forEach(m => addBubble(m.role, m.content));
+    // Line numbers
+    function pgUpdateGutter() {
+      const editor = document.getElementById('pg-editor');
+      const gutter = document.getElementById('pg-gutter');
+      const lines = editor.value.split('\n').length;
+      gutter.textContent = Array.from({ length: lines }, (_, i) => i + 1).join('\n');
     }
 
-    function clearChat() {
-      chatHistory = [];
-      saveHistory();
-      renderHistory();
+    // Tab key support
+    document.addEventListener('DOMContentLoaded', () => {
+      const editor = document.getElementById('pg-editor');
+      editor.addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const s = editor.selectionStart, end = editor.selectionEnd;
+          editor.value = editor.value.substring(0, s) + '  ' + editor.value.substring(end);
+          editor.selectionStart = editor.selectionEnd = s + 2;
+          pgUpdateGutter();
+        }
+      });
+      editor.addEventListener('input', () => {
+        pgUpdateGutter();
+        localStorage.setItem(PG_CODE_KEY, editor.value);
+      });
+      editor.addEventListener('scroll', () => {
+        document.getElementById('pg-gutter').scrollTop = editor.scrollTop;
+      });
+
+      // Restore state
+      const savedLang = localStorage.getItem(PG_LANG_KEY);
+      if (savedLang) document.getElementById('pg-lang').value = savedLang;
+      const savedCode = localStorage.getItem(PG_CODE_KEY);
+      if (savedCode) { editor.value = savedCode; pgUpdateGutter(); }
+      document.getElementById('pg-lang').addEventListener('change', e => {
+        localStorage.setItem(PG_LANG_KEY, e.target.value);
+      });
+      pgUpdateRateUI();
+      pgRenderChat();
+    });
+
+    // Output helpers
+    function pgSetStatus(state) {
+      const dot = document.getElementById('pg-dot');
+      const label = document.getElementById('pg-output-label');
+      dot.className = 'dot';
+      if (state === 'run') { dot.classList.add('dot-run'); label.textContent = 'Running...'; }
+      else if (state === 'err') { dot.classList.add('dot-err'); label.textContent = 'Error'; }
+      else { dot.classList.add('dot-idle'); label.textContent = 'Output'; }
+    }
+    function pgShowOutput(text, isError) {
+      const wrap = document.getElementById('pg-output-wrap');
+      wrap.innerHTML = '<div class="pg-output-header"><span class="dot ' + (isError ? 'dot-err' : 'dot-idle') + '" id="pg-dot"></span><span id="pg-output-label">' + (isError ? 'Error' : 'Output') + '</span></div><div class="pg-output-body" id="pg-output"></div>';
+      document.getElementById('pg-output').innerHTML = text;
+    }
+    function pgShowIframe(html) {
+      const wrap = document.getElementById('pg-output-wrap');
+      wrap.innerHTML = '<div class="pg-output-header"><span class="dot dot-idle" id="pg-dot"></span><span id="pg-output-label">Preview</span></div><div class="pg-iframe-wrap"><iframe sandbox="allow-scripts" id="pg-iframe"></iframe></div>';
+      const iframe = document.getElementById('pg-iframe');
+      const blob = new Blob([html], { type: 'text/html' });
+      iframe.src = URL.createObjectURL(blob);
     }
 
-    async function sendChat() {
-      if (isSending) return;
-      const input = document.getElementById('chat-msg');
-      const msg = input.value.trim();
-      if (!msg) return;
+    // Run code
+    async function pgRun() {
+      const lang = document.getElementById('pg-lang').value;
+      const code = document.getElementById('pg-editor').value;
+      if (!code.trim()) { pgShowOutput('No code to run.', true); return; }
 
-      const key = getStoredKey() || 'zk-tested';
-      const model = document.getElementById('model-sel').value;
-      const box = document.getElementById('chat-box');
-
-      // Remove hint if present
-      const hint = box.querySelector('[style*="text-align:center"]');
-      if (hint) hint.remove();
-
-      // Add user bubble
-      chatHistory.push({ role: 'user', content: msg });
-      addBubble('user', msg);
-      input.value = '';
-      saveHistory();
-
-      // Add typing indicator
-      isSending = true;
-      document.getElementById('chat-btn').disabled = true;
-      const typingDiv = document.createElement('div');
-      typingDiv.className = 'chat-bubble bubble-zka bubble-typing';
-      typingDiv.innerHTML = '<div class="bubble-label">ZKA</div>Thinking...';
-      box.appendChild(typingDiv);
-      box.scrollTop = box.scrollHeight;
+      const btn = document.getElementById('pg-run-btn');
+      btn.disabled = true; btn.textContent = '⏳ Running...';
+      pgSetStatus('run');
 
       try {
-        // Build messages from history for context
-        const messages = chatHistory.map(m => ({ role: m.role, content: m.content }));
+        if (lang === 'javascript') {
+          // Capture console.log
+          const logs = [];
+          const origLog = console.log;
+          const origErr = console.error;
+          const origWarn = console.warn;
+          console.log = (...a) => logs.push(a.map(String).join(' '));
+          console.error = (...a) => logs.push('[error] ' + a.map(String).join(' '));
+          console.warn = (...a) => logs.push('[warn] ' + a.map(String).join(' '));
+          try {
+            const result = eval(code);
+            if (result !== undefined) logs.push(String(result));
+            // Handle promises
+            if (result && typeof result.then === 'function') {
+              const resolved = await result;
+              if (resolved !== undefined) logs.push(String(resolved));
+            }
+            pgShowOutput('<span class="ok">' + esc(logs.join('\n') || '(no output)') + '</span>', false);
+          } catch (e) {
+            pgShowOutput('<span class="err">' + esc(e.message) + '</span>\n\n' + esc(logs.join('\n')), true);
+          }
+          console.log = origLog; console.error = origErr; console.warn = origWarn;
+
+        } else if (lang === 'html') {
+          pgShowIframe(code);
+
+        } else {
+          // Python / Bash via Piston
+          const pistonLang = lang === 'python' ? 'python' : 'bash';
+          const versions = { python: '3.10.0', bash: '5.2.0' };
+          const r = await fetch('https://emkc.org/api/v2/piston/execute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              language: pistonLang,
+              version: versions[pistonLang],
+              files: [{ content: code }]
+            })
+          });
+          const d = await r.json();
+          if (d.run) {
+            const out = d.run.output || '(no output)';
+            const isError = d.run.code && d.run.code !== 0;
+            pgShowOutput(isError ? '<span class="err">' + esc(out) + '</span>' : '<span class="ok">' + esc(out) + '</span>', isError);
+          } else {
+            pgShowOutput('<span class="err">Error: ' + esc(JSON.stringify(d)) + '</span>', true);
+          }
+        }
+      } catch (e) {
+        pgShowOutput('<span class="err">Error: ' + esc(e.message) + '</span>', true);
+      }
+
+      btn.disabled = false; btn.textContent = '▶ Run';
+    }
+
+    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    // Ask ZKA
+    async function pgAskAI() {
+      const code = document.getElementById('pg-editor').value;
+      const question = document.getElementById('pg-ai-msg').value.trim();
+      if (!code.trim() && !question) return;
+
+      if (!pgUseRate()) {
+        const d = pgGetRateData();
+        const waitMin = Math.ceil((d.resetAt - Date.now()) / 60000);
+        pgAddChat('ai', 'Rate limit reached. Resets in ~' + waitMin + ' minutes.');
+        return;
+      }
+
+      const userMsg = (question || 'Explain and review this code:') + '\n\n```\n' + code + '\n```';
+      pgAddChat('user', userMsg);
+      document.getElementById('pg-ai-msg').value = '';
+
+      const typingDiv = pgAddChatTyping();
+      const btn = document.getElementById('pg-ai-btn');
+      btn.disabled = true; btn.textContent = '⏳ Thinking...';
+
+      try {
+        const key = localStorage.getItem('zka-api-key') || 'zk-tested';
+        const messages = [
+          ...pgGetChatHistory().filter(m => m.role !== 'system').map(m => ({
+            role: m.role === 'ai' ? 'assistant' : m.role,
+            content: m.content
+          })),
+          { role: 'user', content: userMsg }
+        ];
         const r = await fetch(BASE + '/v1/chat/completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-          body: JSON.stringify({ model, messages, max_tokens: 500 })
+          body: JSON.stringify({ model: 'zk-v3z', messages, max_tokens: 1000 })
         });
         const d = await r.json();
         typingDiv.remove();
         const reply = d.choices ? d.choices[0].message.content : 'Error: ' + JSON.stringify(d);
-        chatHistory.push({ role: 'assistant', content: reply });
-        addBubble('assistant', reply);
-        saveHistory();
+        pgAddChat('ai', reply);
       } catch (e) {
         typingDiv.remove();
-        addBubble('assistant', 'Error: ' + e.message);
+        pgAddChat('ai', 'Error: ' + e.message);
       }
-      isSending = false;
-      document.getElementById('chat-btn').disabled = false;
-      input.focus();
+      btn.disabled = false; btn.textContent = 'Ask ZKA';
     }
 
-    // Init
-    window.addEventListener('DOMContentLoaded', () => {
-      let key = getStoredKey();
-      if (!key) { key = 'zk-tested'; setStoredKey(key); }
-      const st = document.getElementById('chat-key-status');
-      if (st) st.textContent = 'Key: ' + key.substring(0, 8) + '...';
-      chatHistory = loadHistory();
-      renderHistory();
-      // Enter to send
-      document.getElementById('chat-msg').addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
-      });
-    });
+    // Chat history for playground
+    function pgGetChatHistory() {
+      try { return JSON.parse(localStorage.getItem(PG_CHAT_KEY)) || []; } catch { return []; }
+    }
+    function pgSaveChatHistory(h) { localStorage.setItem(PG_CHAT_KEY, JSON.stringify(h)); }
+    function pgAddChat(role, text) {
+      const history = pgGetChatHistory();
+      history.push({ role, content: text, ts: Date.now() });
+      pgSaveChatHistory(history);
+      pgRenderChatMsg(role, text);
+    }
+    function pgAddChatTyping() {
+      const container = document.getElementById('pg-chat');
+      const div = document.createElement('div');
+      div.className = 'pg-chat-msg pg-chat-ai pg-chat-typing';
+      div.innerHTML = '<div class="pg-chat-label">ZKA</div>Thinking...';
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+      return div;
+    }
+    function pgRenderChatMsg(role, text) {
+      const container = document.getElementById('pg-chat');
+      const div = document.createElement('div');
+      div.className = 'pg-chat-msg ' + (role === 'user' ? 'pg-chat-user' : 'pg-chat-ai');
+      const label = document.createElement('div');
+      label.className = 'pg-chat-label';
+      label.textContent = role === 'user' ? 'You' : 'ZKA';
+      div.appendChild(label);
+      // Simple markdown: code blocks
+      const pre = document.createElement('div');
+      pre.style.cssText = 'white-space:pre-wrap;word-break:break-word;';
+      pre.textContent = text;
+      div.appendChild(pre);
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+    function pgRenderChat() {
+      const container = document.getElementById('pg-chat');
+      container.innerHTML = '';
+      const history = pgGetChatHistory();
+      history.forEach(m => pgRenderChatMsg(m.role, m.content));
+    }
+    function pgClear() {
+      document.getElementById('pg-editor').value = '';
+      document.getElementById('pg-ai-msg').value = '';
+      document.getElementById('pg-output-wrap').innerHTML = '<div class="pg-output-header"><span class="dot dot-idle" id="pg-dot"></span><span id="pg-output-label">Output</span></div><div class="pg-output-body" id="pg-output">Press Run to execute your code...</div>';
+      localStorage.removeItem(PG_CODE_KEY);
+      localStorage.removeItem(PG_CHAT_KEY);
+      document.getElementById('pg-chat').innerHTML = '';
+      pgUpdateGutter();
+    }
 
     // Particles
     const canvas = document.getElementById('particles');

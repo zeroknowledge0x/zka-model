@@ -67,7 +67,9 @@
         .endpoint .value {
             color: #00ff88;
             user-select: all;
+            cursor: pointer;
         }
+        .endpoint .value:hover { text-decoration: underline; }
         .models {
             display: flex;
             gap: 10px;
@@ -95,21 +97,23 @@
             text-align: left;
             white-space: pre;
             line-height: 1.6;
+            position: relative;
         }
         .code-block .kw { color: #ff79c6; }
         .code-block .fn { color: #50fa7b; }
         .code-block .str { color: #f1fa8c; }
         .code-block .cm { color: #6272a4; }
         .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
             background: #222;
             border: 1px solid #333;
             color: #888;
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.75rem;
-            float: right;
-            margin-top: -4px;
+            font-size: 0.7rem;
         }
         .copy-btn:hover { background: #333; color: #ccc; }
         .status {
@@ -129,6 +133,47 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.4; }
         }
+        .playground {
+            margin-top: 20px;
+        }
+        .playground textarea {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 60px;
+        }
+        .playground textarea:focus { outline: none; border-color: #00ff88; }
+        .playground button {
+            background: #00ff88;
+            color: #0a0a0a;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        .playground button:hover { background: #00cc6a; }
+        .playground button:disabled { background: #333; color: #666; cursor: wait; }
+        .response-box {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #aaa;
+            min-height: 40px;
+            white-space: pre-wrap;
+            display: none;
+        }
         footer {
             margin-top: 40px;
             color: #333;
@@ -146,11 +191,11 @@
             <h3>🔌 Endpoint</h3>
             <div class="endpoint">
                 <span class="label">Base URL</span>
-                <span class="value" id="base-url">Loading...</span>
+                <span class="value" onclick="copyText(this)" id="base-url"></span>
             </div>
             <div class="endpoint">
                 <span class="label">API Key</span>
-                <span class="value">Contact @misaka0x for access</span>
+                <span class="value">Contact <a href="https://twitter.com/misaka0x" style="color:#00ff88">@misaka0x</a> for access</span>
             </div>
             <div style="margin-top: 10px;">
                 <span class="status"><span class="dot"></span> Operational</span>
@@ -162,25 +207,25 @@
             <div class="models">
                 <div class="model-tag">
                     <span class="name">zk-v3z</span>
-                    <span class="desc">MiMo v2.5 Pro</span>
+                    <span class="desc">Flagship · Best quality</span>
                 </div>
                 <div class="model-tag">
                     <span class="name">zk-v1b</span>
-                    <span class="desc">Qwen 2.5 7B</span>
+                    <span class="desc">Fast · Lightweight</span>
                 </div>
                 <div class="model-tag">
                     <span class="name">zk-v2b</span>
-                    <span class="desc">Llama 4 Scout</span>
+                    <span class="desc">Balanced · General use</span>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3>⚡ Quick Start</h3>
-            <div class="code-block"><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+            <h3>⚡ Quick Start — Python</h3>
+            <div class="code-block" id="code-python"><button class="copy-btn" onclick="copyCode('code-python')">copy</button><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
 
 client = OpenAI(
-    base_url=<span class="str">"BASE_URL/v1"</span>,
+    base_url=<span class="str" id="py-url">"..."</span>,
     api_key=<span class="str">"YOUR_API_KEY"</span>
 )
 
@@ -192,11 +237,18 @@ response = client.chat.completions.create(
         </div>
 
         <div class="card">
-            <h3>📡 curl</h3>
-            <div class="code-block">curl -X POST BASE_URL/v1/chat/completions \
+            <h3>📡 Quick Start — curl</h3>
+            <div class="code-block" id="code-curl"><button class="copy-btn" onclick="copyCode('code-curl')">copy</button>curl -X POST <span id="curl-url">...</span>/v1/chat/completions \
   -H <span class="str">"Authorization: Bearer YOUR_API_KEY"</span> \
   -H <span class="str">"Content-Type: application/json"</span> \
   -d <span class="str">'{"model":"zk-v3z","messages":[{"role":"user","content":"Hi"}]}'</span></div>
+        </div>
+
+        <div class="card playground">
+            <h3>🎮 Try It</h3>
+            <textarea id="user-msg" placeholder="Type a message...">Siapa kamu?</textarea>
+            <button onclick="sendMsg()" id="send-btn">Send</button>
+            <div class="response-box" id="response-box"></div>
         </div>
 
         <footer>
@@ -206,15 +258,61 @@ response = client.chat.completions.create(
     </div>
 
     <script>
-        // Auto-detect base URL from config
-        const BASE = localStorage.getItem('zk-api-base') || '';
-        document.getElementById('base-url').textContent = BASE || 'Set via localStorage: zk-api-base';
+        // Base URL — update this if ngrok URL changes
+        const BASE = 'https://reptile-murkiness-grape.ngrok-free.dev';
         
-        // Replace BASE_URL in code blocks
-        if (BASE) {
-            document.querySelectorAll('.code-block').forEach(el => {
-                el.innerHTML = el.innerHTML.replace(/BASE_URL/g, BASE);
-            });
+        // Fill in URLs
+        document.getElementById('base-url').textContent = BASE + '/v1';
+        document.getElementById('py-url').textContent = '"' + BASE + '/v1"';
+        document.getElementById('curl-url').textContent = BASE;
+
+        function copyText(el) {
+            navigator.clipboard.writeText(el.textContent);
+            el.style.color = '#fff';
+            setTimeout(() => el.style.color = '#00ff88', 500);
+        }
+
+        function copyCode(id) {
+            const el = document.getElementById(id);
+            const text = el.textContent.replace('copy', '').trim();
+            navigator.clipboard.writeText(text);
+        }
+
+        async function sendMsg() {
+            const msg = document.getElementById('user-msg').value;
+            const btn = document.getElementById('send-btn');
+            const box = document.getElementById('response-box');
+            
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            box.style.display = 'block';
+            box.textContent = '⏳ Waiting for response...';
+
+            try {
+                const resp = await fetch(BASE + '/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + prompt('Enter your API key:')
+                    },
+                    body: JSON.stringify({
+                        model: 'zk-v3z',
+                        messages: [{role: 'user', content: msg}],
+                        max_tokens: 200
+                    })
+                });
+                const data = await resp.json();
+                if (data.choices) {
+                    box.textContent = '🤖 ' + data.choices[0].message.content;
+                } else {
+                    box.textContent = '❌ Error: ' + JSON.stringify(data);
+                }
+            } catch (e) {
+                box.textContent = '❌ Error: ' + e.message;
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Send';
         }
     </script>
 </body>

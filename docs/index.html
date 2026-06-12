@@ -741,7 +741,7 @@ response = client.chat.completions.create(
     const PG_CODE_KEY = 'zka-pg-code';
     const PG_CHAT_KEY = 'zka-pg-chat';
     const PG_RATE_KEY = 'zka-pg-rate';
-    const PG_RATE_MAX = 9;
+    const PG_RATE_MAX = 999999; // Unlimited for testing
     const PG_RATE_WINDOW = 3 * 60 * 60 * 1000; // 3 hours
 
     // Rate limiting

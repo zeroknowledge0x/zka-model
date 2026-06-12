@@ -728,21 +728,31 @@ response = client.chat.completions.create(
           role: m.role === 'zka' ? 'assistant' : m.role,
           content: m.content
         }));
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 120000);
         const r = await fetch(BASE + '/v1/chat/completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + CHAT_API_KEY },
-          body: JSON.stringify({ model, messages, max_tokens: 1000 })
+          body: JSON.stringify({ model, messages, max_tokens: 1000 }),
+          signal: controller.signal
         });
+        clearTimeout(timeout);
         const d = await r.json();
         typingDiv.remove();
-        if (d.choices && d.choices[0]) {
+        if (d.error) {
+          chatAddMsg('zka', '⚠️ ' + (d.error.message || 'Something went wrong. Try again later.'));
+        } else if (d.choices && d.choices[0]) {
           chatAddMsg('zka', d.choices[0].message.content);
         } else {
           chatAddMsg('zka', 'Error: ' + JSON.stringify(d));
         }
       } catch (e) {
         typingDiv.remove();
-        chatAddMsg('zka', 'Error: ' + e.message);
+        if (e.name === 'AbortError') {
+          chatAddMsg('zka', '⏱️ Request timed out. Try again or use a simpler message.');
+        } else {
+          chatAddMsg('zka', '⚠️ Network error. Check your connection and try again.');
+        }
       }
       sendBtn.disabled = false;
     }

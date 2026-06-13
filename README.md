@@ -2,7 +2,7 @@
 
 > **Documentation:** [zeroknowledge0x.github.io/zka-model/](https://zeroknowledge0x.github.io/zka-model/)
 
-ZKA Model is a high-performance AI inference platform that provides fast, reliable access to large language models through a RESTful API. It is designed for production workloads, offering low-latency completions, streaming responses, and flexible authentication.
+ZKA Model is the **Model Layer** of the [ZKA Labs](https://zeroknowledge0x.github.io/ZKA-Labs/) ecosystem — a high-performance AI inference platform that provides fast, reliable access to large language models through a RESTful API. It is designed for production workloads, offering low-latency completions, streaming responses, and flexible authentication.
 
 ---
 

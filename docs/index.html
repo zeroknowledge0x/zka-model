@@ -675,7 +675,7 @@ response = client.chat.completions.create(
     // Fill URLs
     document.getElementById('base-url').textContent = BASE + '/v1';
     document.getElementById('py-url').textContent = '"' + BASE + '/v1"';
-    document.getElementById('curl-url').textContent = 'POST ' + BASE;
+    document.getElementById('curl-url').textContent = '-X POST ' + BASE;
 
     // Loader
     window.addEventListener('load', () => {

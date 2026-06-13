@@ -229,8 +229,9 @@ print(response.choices[0].message.content)
 
 ## Support
 
-- **Dashboard:** [app.zka-model.dev](https://app.zka-model.dev)
-- **Email:** support@zka-model.dev
+- **GitHub:** [github.com/zeroknowledge0x](https://github.com/zeroknowledge0x)
+- **Twitter:** [@zeroknowledge0x](https://twitter.com/zeroknowledge0x)
+- **Telegram:** [t.me/zeroknowledge0x](https://t.me/zeroknowledge0x)
 
 ---
 
